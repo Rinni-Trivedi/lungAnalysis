@@ -1,0 +1,292 @@
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        p {
+            color: #0f3756;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            overflow-y: scroll !important;
+            font-family: 'Inter', sans-serif;
+        }
+
+        table {
+            width: 100%;
+            margin: auto;
+        }
+
+        img {
+            display: block;
+        }
+
+        td span {
+            font-size: 1.125em;
+            color: rgb(59, 59, 58);
+            font-weight: bold;
+            font-style: normal;
+            text-decoration: none
+        }
+
+        th {
+            font-size: 1.225em;
+            color: rgb(59, 59, 58);
+            font-weight: bold;
+            font-style: normal;
+            text-decoration: none;
+            padding-bottom: 0.625em;
+        }
+
+        td {
+            font-size: 1.0625em;
+            color: rgb(59, 59, 58);
+            font-weight: normal;
+            font-style: normal;
+            text-decoration: none;
+            vertical-align: middle;
+        }
+
+        .headings {
+            font-size: 1.575em;
+            color: rgb(59, 59, 58);
+        }
+
+        .detailsTable {
+            width: 60%
+        }
+
+        .detailsTable tr td:nth-child(odd) {
+            width: 17%;
+        }
+
+        .detailsTable tr td:nth-child(even) {
+            width: 20%;
+        }
+
+        .detailsTable tr td:nth-child(5) {
+            width: 6%;
+        }
+
+        option {
+            font-size: 1em;
+            color: rgb(59, 59, 58);
+            font-weight: bold;
+            font-style: normal;
+            text-decoration: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select {
+            font-size: 1em;
+            color: rgb(59, 59, 58);
+            font-weight: bold;
+            font-style: normal;
+            text-decoration: none;
+            width: -moz-available;
+            /* For Mozzila */
+            width: -webkit-fill-available;
+            /* For Chrome */
+            width: stretch;
+            /* Unprefixed */
+            border: 0;
+            background-color: white;
+            border-bottom: solid 1px lightgray;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type=number] {
+            font-size: 1em;
+            color: rgb(59, 59, 58);
+            font-weight: bold;
+            font-style: normal;
+            text-decoration: none;
+            width: 45%;
+            border: 0;
+            background-color: white;
+            border-bottom: solid 1px lightgray;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .attenuationVolumesTable {
+            width: 80%;
+            text-align: left;
+        }
+
+        .attenuationVolumesTable tr td {
+            border-bottom: solid 0.1875em rgb(57, 217, 203);
+            font-size: 1.2em;
+        }
+
+        .attenuationVolumesTable tbody tr:nth-child(2) {
+            background-color: rgba(100, 100, 100, 0.2);
+        }
+
+        .attenuationVolumesTable tbody tr:nth-child(2) td {
+            font-weight: bold;
+        }
+
+        .attenuationVolumesTable tbody tr:nth-child(3) {
+            background-color: rgba(100, 100, 100, 0.2);
+        }
+
+        .attenuationVolumesTable tbody tr:nth-child(3) td {
+            font-weight: bold;
+        }
+
+        .attenuationVolumesTable tbody tr:nth-child(6) {
+            background-color: rgba(100, 100, 100, 0.2);
+        }
+
+        .attenuationVolumesTable tbody tr:nth-child(6) td {
+            font-weight: bold;
+        }
+
+        .attenuationVolumesTable tr th:first-child,
+        .attenuationVolumesTable tr td:first-child {
+            width: 5%;
+            border: 0px;
+            background-color: rgb(255, 255, 255);
+        }
+
+        .attenuationVolumesTable tr:last-child,
+        .attenuationVolumesTable tr:last-child td {
+            text-align: center;
+            border: 0px;
+        }
+
+        .attenuationVolumesTable tr td i {
+            font-size: 1.1em;
+        }
+
+
+
+        #reportContent {
+            text-align: center;
+            width: 90%;
+            margin: auto;
+            max-height: 1408px;
+            overflow-y: scroll;
+            overflow-x: visible;
+        }
+
+        .noduleTable {
+            width: 80%;
+            text-align: left;
+            box-shadow: 0px 2px rgb(57, 217, 203);
+            font-size: 1.25em;
+            color: rgb(59, 59, 58);
+        }
+
+        input[type=checkbox].css-checkbox {
+            float: right;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            width: 1px;
+            margin: 5px;
+            padding: 0;
+            border: 0;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type=checkbox].css-checkbox+label.css-label {
+            padding-left: 25px;
+            height: 25px;
+            display: inline-block;
+            line-height: 25px;
+            background-repeat: no-repeat;
+            background-position: 0 0;
+            font-size: 25px;
+            vertical-align: middle;
+            cursor: pointer;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+
+        }
+
+        input[type=checkbox].css-checkbox:checked+label.css-label {
+            background-position: 0 -25px;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        label.css-label {
+            float: right;
+            background-image: url("./Predible%20Lung_files/checkbox.png");
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .pell-content-predible {
+            outline: 1px;
+            overflow-y: auto;
+            padding: 5px;
+            border: solid 1px;
+            min-height: 90%;
+            font-size: 1.1em;
+        }
+
+        figure {
+            display: table-cell;
+            margin: auto;
+        }
+
+        .reportCheckbox {
+            background-image: url("./Predible%20Lung_files/checkbox.png");
+            padding-left: 25px;
+            height: 25px;
+            display: inline-block;
+            line-height: 25px;
+            background-repeat: no-repeat;
+            background-position: 0 0px;
+            font-size: 25px;
+            vertical-align: middle;
+            cursor: pointer;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .reportCheckbox:checked {
+            background-image: url("./Predible%20Lung_files/checkbox.png");
+            padding-left: 25px;
+            height: 25px;
+            display: inline-block;
+            line-height: 25px;
+            background-repeat: no-repeat;
+            background-position: 0 -25px;
+            font-size: 25px;
+            vertical-align: middle;
+            cursor: pointer;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .fibTables {
+            text-align: center;
+        }
+
+        .fibTables td {
+            border: rgb(57, 203, 217) solid 1px;
+        }
+
+        .fibTables th {
+            font-size: 1.1em;
+            border: rgb(57, 203, 217) solid 1px;
+        }
+
+        .fibTables tbody tr td:first-child {
+            font-weight: bold;
+        }

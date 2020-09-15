@@ -1,0 +1,708 @@
+var DenonName;
+var changeApproval=false;
+
+
+function fillLobeWise() {
+    $("#totalNodules")[0].innerText = report.length;
+    var ru=0,rm=0,rl=0,lu=0,ll=0;
+    for(var each of report) {
+        switch(each.lobe){
+                case "R/Lower":rl = rl + 1; break;
+                case "R/Upper":ru = ru + 1; break;
+                case "R/Middle":rm = rm + 1; break;
+                case "L/Lower":ll = ll + 1; break;
+                case "L/Upper":lu = lu + 1; break;
+            }
+    }
+    $("#rightUpper")[0].innerText = ru;
+    $("#leftUpper")[0].innerText = lu;
+    $("#rightMiddle")[0].innerText = rm;
+    $("#leftLower")[0].innerText = ll;
+    $("#rightLower")[0].innerText = rl;
+
+
+}
+
+function get_filename(data, key) {
+    value = data.thumbnail;
+    if(value) {
+        split_array = value.split("/");
+        return split_array[split_array.length - 1]
+    }
+    return key + String(data.noduleID) + ".png";
+}
+
+var HIGH_RISK = 1;
+var LOW_RISK = 0;
+
+function getPrimaryNodule() {
+    for(let eachNodule of report) {
+        if (typeof eachNodule.addToReport == undefined) {
+            return report[0]
+        } else if (eachNodule.addToReport) {
+            return eachNodule;
+        }
+    }
+}
+
+function get_follow_up_recommendation(report, risk) {
+    var recommendation, path, primaryNodule = getPrimaryNodule(), diameter = (2 * primaryNodule.radiusVol).toFixed(1);
+
+    function set_solitary_nodule_recommendation() {
+        if (primaryNodule.texture == "solid") {
+            if (diameter< 6) {
+                if (risk == HIGH_RISK) {
+                    recommendation = "Follow-up in 12 months recommended; if unchanged, no further follow-up";
+                    path = "Patient at High risk; Solitary solid nodule under 6mm";
+                } else {
+                    recommendation = "No follow-up recommended";
+                    path = "Patient at Low risk; Solitary solid nodule under 6mm";
+                }
+            } else if (diameter < 8) {
+                if (risk == HIGH_RISK) {
+                    recommendation = "Follow-Up in 6-12 months and 18-24 months recommended";
+                    path = "Patient at High risk; Solitary solid nodule between 6 and 8 mm";
+                } else {
+                    recommendation = "Follow-up in 6-12 months recommended; consider follow-up in 18-24 months";
+                    path = "Patient at Low risk; Solitary solid nodule between 6 and 8 mm";
+                }
+            } else {
+                recommendation = "Follow-up in 3 months, PET-CT or biopsy recommended";
+                path = "Solitary solid nodule greater than 8 mm";
+            }
+        } else { //Single Sub Solid
+            if (diameter < 6) {
+                if (primaryNodule.texture == "part-solid") {
+                    recommendation = "No follow-up recommended";
+                    path = "Solitary part-solid nodule under 6mm";
+                } else {
+                    recommendation = "No follow-up recommended";
+                    path = "Solitary ground-glass nodule under 6mm";
+                }
+            } else {
+                if (primaryNodule.texture == "part-solid") {
+                    recommendation = "Follow-up in 3-6 months, then yearly for 5 years recommended";
+                    path = "Solitary part-solid nodule greater than 6mm";
+                } else {
+                    recommendation = "Follow-up in 6-12 months, 3 years and 5 years recommended";
+                    path = "Solitary ground-glass nodule greater than 6mm";
+                }
+            }
+        }
+    }
+
+    function set_multiple_nodule_recommendation() {
+        if (primaryNodule.texture == "solid") {
+            if (diameter< 6) {
+                if (risk == HIGH_RISK) {
+                    recommendation = "Consider Follow-up in 12 months";
+                    path = "Patient at High risk; Multiple solid nodules under 6mm";
+                } else {
+                    recommendation = "No follow-up recommended";
+                    path = "Patient at Low risk; Multiple solid nodules under 6mm";
+                }
+            } else if (diameter < 8) {
+                if (risk == HIGH_RISK) {
+                    recommendation = "Follow-up in 3, 9 and 24 months recommended if unchanged";
+                    path = "Patient at High risk; Multiple solid nodule with at least one in between 6 and 8 mm";
+                } else {
+                    recommendation = "Follow-up in 6-12 months recommended; if unchanged, further follow-up in 18-24 months";
+                    path = "Patient at Low risk; Multiple solid nodules with at least one in between 6 and 8 mm";
+                }
+            } else {
+                if (risk == HIGH_RISK) {
+                    recommendation = "Follow-up in 3-6 months and 12-24 months recommended";
+                    path = "Patient at High risk; Multiple solid nodules with at least one greater than 8 mm";
+                } else {
+                    recommendation = "Follow-up in 3-6 months recommended; consider follow-up in 18-24 months";
+                    path = "Patient at Low risk; Multiple solid nodules with at least one greater than 8 mm";
+                }
+            }
+        } else {
+            if (diameter < 6) {
+                recommendation = "Follow-up in 3-6 months recommended; if constant, additional CT scan after 2 years and 4 years";
+                path = "Multiple sub-solid nodules, all under 6mm";
+            } else {
+                recommendation = "Follow-up in 3-6 months recommended. Subsequent management based on most suspicious nodule";
+                path = "Multiple sub-solid nodules, at least one over 6mm";
+            }
+        }
+    }
+
+    if (report.length > 1) { //Multiple nodules
+        var solitary = true;
+        for(var i=1; i< report.length; i++) {
+            if (primaryNodule.texture == "solid") {
+                if (report[i].texture == primaryNodule.texture) {
+                    solitary = false;
+                    break;
+                }
+            } else {
+                if (report[i].texture == "part-solid" || report[i].texture == "non-solid") {
+                    solitary = false;
+                    break;
+                }
+            }
+        }
+        if (solitary) {
+            set_solitary_nodule_recommendation();
+        } else {
+            set_multiple_nodule_recommendation();
+        }
+    } else { // Single
+        set_solitary_nodule_recommendation();
+    }
+    return `<div data-tooltip="${path}">Recommendation: <b><i>${recommendation} (Fleischner Society 2017).</i></b></div>`
+}
+
+function getCalcificationLabel(data, index) {
+    var calPrint;
+    if(data.calcification == "?") {
+        calPrint = `<input type=number min=0 onchange='changeCalcification(${data.noduleID}, this)'/> %`;
+    } else {
+        calPrint = `<input type=number min=0 onchange='changeCalcification(${data.noduleID}, this)' value='${data.calcification}'/> %`;
+    }
+    return calPrint;
+}
+
+function getSizeAndVolumeLabels(data, index) {
+    var sizePrint = `<input type=number min=0 onchange='changeSize(${data.noduleID}, this)' value='${(2 * data.radiusVol).toFixed(1)}'>mm`;
+
+    if (typeof data.noduleID == "undefined") {
+        data.noduleID = data.ID? data.ID : index;
+    }
+    var volPrint;
+    if (isNaN(data.volume)) {
+        volPrint = `<input type=number min=0 onchange='changeVolume(${data.noduleID}, this)'/> ml`;
+    } else if (Number(data.volume).toFixed(2)==0.00){
+        volPrint = `<input type=number min=0 onchange='changeVolume(${data.noduleID}, this)'/> ml`
+    } else {
+        volPrint = `<input type=number min=0 onchange='changeVolume(${data.noduleID}, this)' value='${Number(data.volume).toFixed(2)}'>ml`;
+    }
+    return [sizePrint, volPrint]
+}
+
+function getSizeAndVolumePrint(data, index) {
+    var sizePrint = (2 * data.radiusVol).toFixed(1) + " mm";
+    var volPrint;
+    if (isNaN(data.volume)) {
+        volPrint = "?"
+    } else if (Number(data.volume).toFixed(2)==0.00){
+        volPrint = "?"
+    } else {
+        volPrint = Number(data.volume).toFixed(2) + " ml";
+    }
+    return [sizePrint, volPrint]
+}
+
+
+function shouldPrint(data, index) {
+    if (index>2) {
+        if (index < 5) {
+            var size = (2 * data.radiusVol).toFixed(1);
+            if (size<6) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+function fillNodules() {
+    $("#reportContent").html("");
+    $("#reportSummaryDiv").html("");
+
+    report.forEach(function (data, index) {
+
+        data.noduleID = index;
+        if(!data.radiusVol) {
+            data.radiusVol = Number(data.side_length[2]) / 2;
+        }
+
+        if(typeof data.addToReport == "undefined") {
+            data.addToReport = shouldPrint(data, index);
+        }
+
+        var resultArray = getSizeAndVolumeLabels(data, index);
+        var calPrint = getCalcificationLabel(data, index);
+        var sizePrint, volPrint;
+        sizePrint = resultArray[0];
+        volPrint = resultArray[1];
+
+        function checkLobe(value) {
+            if(!(typeof data.lobe == "undefined")) {
+                if(data.lobe == value) {
+                    return "selected";
+                }
+            }
+            return "";
+        }
+
+        function checkTexture(value) {
+            if(!(typeof data.texture == "undefined")) {
+                if(data.texture == value) {
+                    return "selected";
+                }
+            }
+            return "";
+        }
+
+        function checkBoundary(value) {
+            if(!(typeof data.boundary == "undefined")) {
+                if(data.boundary == value) {
+                    return "selected";
+                }
+            }
+            return "";
+        }
+
+        function addtoReportCheckbox(value) {
+            if(value) {
+                return "checked";
+            }
+            return "";
+        }
+
+        $("#reportContent").append(`<br/><table class="noduleTable">
+                                        <tr>
+                                            <td colspan=2 rowspan=1 style="padding:0px"><span style="display: inline-block;">Nodule ${index + 1}</span></td>
+                                            <td rowspan=10 style="vertical-align:bottom;">
+                                                <img src=${"./Predible%20Lung_files/" + get_filename(data, "thumbnail_")} width=256>
+                                            </td>
+                                            <td>
+                                                <a data-tooltip="Mark as false positive" style="float:right;vertical-align:top;" data-position="bottom center"  onclick=deleteNodule(${(index)})>
+                                                    <i class="trash icon"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a data-tooltip="Mark as most significant" style="float:right;vertical-align:top;" data-position="bottom center" onclick=promoteNodule(${(index)})>
+                                                    <i class="angle double up icon" style="font-size:1.5em;"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" class="reportCheckbox" name="addToReport${index}" id="addToReport${index}" ${addtoReportCheckbox(data.addToReport)} onchange=addToReport(${(index)}) data-tooltip="Add to report" data-position="bottom center">
+                                            </td>
+                                        </tr><tr style="height:7%"/><tr style="height:7%"/><tr style="height:7%"/>
+                                        <tr>
+                                            <td>Lobe:</td><td>
+                                                            <select onchange="changeLobe(${(data.noduleID)}, this)">
+                                                                <option value="?" ${checkLobe('?')}></option>
+                                                                <option value="R/Upper" ${checkLobe('R/Upper')}>Right Upper</option>
+                                                                <option value="R/Middle" ${checkLobe('R/Middle')}>Right Middle</option>
+                                                                <option value="R/Lower" ${checkLobe('R/Lower')}>Right Lower</option>
+                                                                <option value="L/Upper" ${checkLobe('L/Upper')}>Left Upper</option>
+                                                                <option value="L/Lower" ${checkLobe('L/Lower')}>Left Lower</option>
+                                                            </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Type:</td><td>
+                                                            <select onchange="changeTexture(${(data.noduleID)}, this)">
+                                                                <option value="?" ${checkTexture('?')}></option>
+                                                                <option value="solid" ${checkTexture('solid')}>Solid</option>
+                                                                <option value="part-solid" ${checkTexture('part-solid')}>Part-solid</option>
+                                                                <option value="non-solid" ${checkTexture('non-solid')}>Ground-glass</option>
+                                                            </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>%Calcification:</td><td>${calPrint}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Size:</td><td>${sizePrint}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Volume:</td><td>${volPrint}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Border:</td><td>
+                                                            <select onchange="changeBoundary(${(data.noduleID)}, this)">
+                                                                <option value="?" ${checkBoundary('?')}></option>
+                                                                <option value="smooth" ${checkBoundary('smooth')}>Smooth</option>
+                                                                <option value="poorly defined" ${checkBoundary('poorly defined')}>Poorly Defined</option>
+                                                                <option value="spiculated" ${checkBoundary('spiculated')}>Spiculated</option>
+                                                                <option value="lobulated" ${checkBoundary('lobulated')}>Lobulated</option>
+                                                            </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>`);
+    });
+
+    $("#reportSummaryDiv").append(`<div class="ui segments" style="text-align:center;width:80%;margin:auto;border: 0px;box-shadow: none;">
+                                    <div class="ui segment">
+                                        <form class="ui form" id="reportSummary" style="width:initial;">
+                                            <input type="hidden" name="taskId" id="taskId" value="${taskId}">
+                                            <button class="ui button" type="submit" id="approve">Approve report</button><button class="ui button" type="submit" id="download">Download</button>
+                                        </form>
+                                    </div>
+                                </div>`);
+
+}
+
+function generate_emphysema_editor_content() {
+    var width = (document.getElementsByClassName("ui sixteen column grid")[0].offsetWidth /2.55) * 0.8 / 2;
+    var emphysema_content = `<h3>Low Attenuation Analysis</h3><br/>
+                             <div style="vertical-align:middle;width:fit-content;overflow:auto">
+                                <img src="/LUNG/image/${taskId}/emphysema_0.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                                <img src="/LUNG/image/${taskId}/emphysema_20.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                              </div><br/>`;
+    var laaTable = document.getElementById("emphysemaTable");
+    emphysema_content = emphysema_content.concat(`<div style="text-align:center">${laaTable.outerHTML}</div>`)
+
+    function get_morphology_report(morpElement) {
+        var options = morpElement.options;
+        if(options[1].selected || options[2].selected || options[3].selected) {
+            var returnString = "";
+            if(options[1].selected && options[2].selected && options[3].selected) {
+                returnString = "centrilobular, panlobular and paraseptal";
+            } else if (options[1].selected && options[2].selected) {
+                returnString = "centrilobular and panlobular";
+            } else if (options[1].selected && options[3].selected) {
+                returnString = "centrilobular and paraseptal";
+            } else if (options[2].selected && options[3].selected) {
+                returnString = "panlobular and paraseptal";
+            } else if (options[1].selected) {
+                returnString = "centrilobular";
+            } else if (options[2].selected) {
+                returnString = "panlobular";
+            } else if (options[3].selected) {
+                returnString = "paraseptal";
+            }
+            return `<div><p>The emphysema is ${returnString} in nature</p></div>`;
+        } else {
+            return "<div>&nbsp</div>";
+        }
+    }
+
+    morphology = document.getElementById("empphysemaMorphology");
+    emphysema_content = emphysema_content.concat(get_morphology_report(morphology));
+    emphysemasummary.content.innerHTML = emphysema_content;
+}
+
+function generate_fibrosis_editor_content() {
+    var width = (document.getElementsByClassName("ui sixteen column grid")[0].offsetWidth /2.55) * 0.8 / 2;
+    var fibrosis_content = `<h3>High Attenuation Analysis</h3><br/>
+                             <div style="vertical-align:middle;">
+                                <div style="vertical-align:middle;width:fit-content;overflow:auto">
+                                    <img src="/LUNG/image/${taskId}/fibrosis_0.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                                    <img src="/LUNG/image/${taskId}/fibrosis_20.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                                    <p style="text-align:center;width:100%;">Fibrosis</p>
+                                </div>
+                                <div style="vertical-align:middle;width:fit-content;overflow:auto">
+                                    <img src="/LUNG/image/${taskId}/honeycombing_0.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                                    <img src="/LUNG/image/${taskId}/honeycombing_20.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                                    <p style="text-align:center;width:100%;">Honeycombing</p>
+                                </div>
+                                <div style="vertical-align:middle;width:fit-content;overflow:auto">
+                                    <img src="/LUNG/image/${taskId}/gg_0.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                                    <img src="/LUNG/image/${taskId}/gg_20.png" width=${width}  class="imgReport empContentReport" style="display:inline-block;vertical-align:middle;">
+                                    <p style="text-align:center;width:100%;">Ground glass</p>
+                                </div>
+                              </div><br/>`;
+    fibrosis_content = fibrosis_content.concat(`<h4>Fibrosis Quantification</h4>`)
+    fibrosis_content = fibrosis_content.concat(`<div style="text-align:center">${generate_table_html('qTable').outerHTML}</div><div>&nbsp</div>`)
+    fibrosis_content = fibrosis_content.concat(`<h4>Fibrosis Distribution</h4>`)
+    var table_list = ['dulTable', 'dcrTable'];
+    table_list.map(function (value) { fibrosis_content = fibrosis_content.concat(`<div style="text-align:center">${generate_table_html(value).outerHTML}</div><div>&nbsp</div>`);})
+    fibrosis_content = fibrosis_content.concat("<div>&nbsp</div>");
+    fibrosissummary.content.innerHTML = fibrosis_content;
+}
+
+function generate_table_html(tableId) {
+    var laaTable = document.getElementById(tableId);
+    return laaTable;
+}
+function generate_nodule_editor_content() {
+    if (report.length == 0) {
+        nodulesummary.content.innerHTML = "<div>No nodules found</div>";
+        return;
+    }
+    var width = (document.getElementsByClassName("ui sixteen column grid")[0].offsetWidth /2.55) * 0.8 / 5;
+    var nodule_content = "<h3>Nodule Analysis</h3><br/><div>";
+    if (report.length > 1) {
+        nodule_content = nodule_content.concat(`<div>There is a total of ${report.length} nodules detected in the lung.&nbsp</div><br/>`);
+    }
+    if (report.length > 3) {
+        nodule_content = nodule_content.concat(`<div>
+                                                <div>
+                                                        Right Upper: <b>${$("#rightUpper")[0].innerText}</b>&nbsp Left Upper: <b>${$("#leftUpper")[0].innerText}</b>
+                                                </div>
+                                                <div>
+                                                        Right Middle: <b>${$("#rightMiddle")[0].innerText}</b>&nbsp Left Lower: <b>${$("#leftLower")[0].innerText}</b>
+                                                </div>
+                                                <div>
+                                                        Right Lower: <b>${$("#rightLower")[0].innerText}</b>
+                                            </div><br/>`);
+    }
+    nodule_content = nodule_content.concat(`<div style="vertical-align:middle;display:table;">`);
+    report.forEach(function (data, index) {
+        if(typeof data.addToReport == "undefined") {
+            data.addToReport = shouldPrint(data, index);
+        }
+        if (!data.addToReport) {
+            return;
+        }
+        nodule_content = nodule_content.concat(`<img src=${"./Predible%20Lung_files/" + get_filename(data, "thumbnail_")} width=${width} style="float:left" class="imgReport noduleThumb">`);
+    });
+    nodule_content = nodule_content.concat(`</div><br/>`);
+    report.forEach(function (data, index) {
+        if(typeof data.addToReport == "undefined") {
+            data.addToReport = shouldPrint(data, index);
+        }
+        if (!data.addToReport) {
+            return;
+        }
+
+        var sizePrint, volPrint;
+        var resultArray = getSizeAndVolumePrint(data, index);
+        sizePrint = resultArray[0];
+        volPrint = resultArray[1];
+
+        function get_texture_report() {
+            if (data.texture == "?") {
+                return ""
+            } else {
+                if (data.texture == "non-solid") {
+                    return `<i>ground-glass</i>`;
+                } else {
+                    return `<i>${data.texture}</i>`;
+                }
+            }
+        }
+
+        function get_border_report() {
+            if(!(typeof data.boundary == "undefined")) {
+                if (data.boundary == "?") {
+                    return ``
+                }
+                return `with ${data.boundary} borders `;
+            }
+            return "";
+        }
+
+        function get_lobe_report() {
+            if (data.lobe == "?") {
+                return ""
+            } else {
+                var returnString = ''
+                switch(data.lobe){
+                    case "R/Lower":returnString = "<i>Right Lower Lobe</i>"; break;
+                    case "R/Upper":returnString = "<i>Right Upper Lobe</i>"; break;
+                    case "R/Middle":returnString = "<i>Right Middle Lobe</i>"; break;
+                    case "L/Lower":returnString = "<i>Left Lower Lobe</i>"; break;
+                    case "L/Upper":returnString = "<i>Left Upper Lobe</i>"; break;
+                }
+                return ` in the ${returnString}`
+            }
+        }
+
+        function get_size_and_volume_report() {
+            if (volPrint == "?") {
+                return `It has a diameter of <b>${sizePrint}.</b>`
+            } else {
+                return `It has a diameter of <b>${sizePrint}</b> and a volume of <b>${volPrint}</b>.`
+            }
+        }
+
+        function get_calcification_report() {
+            if (data.calcification == "?") {
+                return ``
+            } else {
+                if (data.calcification == 0) {
+                    return `It is <i>non-calcified</i>.`
+                } else {
+                    return `It is <i>${data.calcification}% calcified</i>.`
+                }
+            }
+        }
+
+
+        function also() {
+            return index>0?  " also" : "";
+        }
+
+        nodule_content = nodule_content.concat(`<div>
+                                                <p>
+                                                    A ${get_texture_report()} nodule ${get_border_report()}was${also()} seen${get_lobe_report()}. ${get_size_and_volume_report()} ${get_calcification_report()}&nbsp
+                                                </p>
+                                            </div>`);
+    });
+
+
+    nodule_content = nodule_content.concat(`<br/>${get_follow_up_recommendation(report, document.getElementById("highRisk").checked ? HIGH_RISK : LOW_RISK)}`);
+    nodule_content = nodule_content.concat('</div>');
+    nodulesummary.content.innerHTML = nodule_content;
+}
+
+function getBase64Image(img﻿) {
+    // Create an empty canvas element
+    var canvas = document.createElement("canvas");
+    canvas.width ﻿= img.width﻿;
+    canvas.height = img.height;
+﻿
+    // Copy the image contents to the canvas
+    var ctx = canvas.getContext("2d");
+﻿    ctx.drawImage(img, 0, 0, img.width﻿, img.height);
+
+    // Get the data-URL formatted image
+    // Firefox supports PNG and JPEG. You could check img.src to
+    // guess the original format, but be aware the using "image/jpg"
+    // will re-encode the image.
+    var dataURL = canvas.toDataURL﻿("image/png");
+
+    return dataURL﻿;
+}
+
+function copyPlease(elem) {
+    imageElements = elem.getElementsByClassName("imgReport");
+    var originalSource = [];
+    for (var eachImage of imageElements) {
+        originalSource.push(eachImage.src);
+        eachImage.src = getBase64Image(eachImage);
+    }
+	html = elem.content.innerHTML;
+	plain = elem.content.textContent;
+	copyHandler = function(e) {
+		e.preventDefault();
+		e.clipboardData.setData("text/plain", plain);
+		e.clipboardData.setData("text/html", html);
+	}
+	elem.addEventListener("copy", copyHandler)
+	var a = window.getSelection();
+	a.removeAllRanges();
+	var s = document.createRange();
+	s.selectNode(elem),
+	a.addRange(s);
+	var c = document.execCommand("copy");
+	elem.removeEventListener("copy", copyHandler);
+	a.removeAllRanges()
+	for (var i=0; i<imageElements.length; i++) {
+        imageElements[i].src = originalSource[i];
+    }
+}
+function deleteNodule(index) {
+    report.splice(index, 1);
+    changeApproval = true;
+    refillNodules();
+    generate_nodule_editor_content();
+}
+
+function promoteNodule(index) {
+    actuallyPromoteNodule(index, 0);
+}
+
+function actuallyPromoteNodule(index1, index2) {
+    report.splice(index2, 0, report.splice(index1, 1)[0]);
+    report[0].addToReport = true;
+    changeApproval = true;
+    refillNodules();
+    generate_nodule_editor_content();
+}
+
+function addToReport(index) {
+    element = document.getElementById(`addToReport${index}`);
+    report[index].addToReport = element.checked;
+    changeApproval = true;
+    refillNodules();
+    generate_nodule_editor_content();
+}
+
+function changeLobe(index, selectElement) {
+    report[index].lobe = selectElement.value;
+    fillLobeWise();
+    generate_nodule_editor_content();
+}
+function changeTexture(index, selectElement) {
+    report[index].texture = selectElement.value;
+    generate_nodule_editor_content();
+}
+
+function changeCalcification(index, inputElement) {
+    report[index].calcification = inputElement.value;
+    generate_nodule_editor_content();
+}
+
+function changeSize(index, inputElement) {
+    report[index].radiusVol = inputElement.value / 2;
+    generate_nodule_editor_content();
+}
+
+function changeVolume(index, inputElement) {
+    report[index].volume = inputElement.value;
+    generate_nodule_editor_content();
+}
+
+function changeBoundary(index, selectElement) {
+    report[index].boundary = selectElement.value;
+    generate_nodule_editor_content();
+}
+
+var studyJson = JSON.parse(studyDetails.study_json)
+DenonName = studyJson.PatientName;
+$("#sex")[0].innerText = studyJson.PatientSex;
+$("#age")[0].innerText = studyJson.PatientAge;
+$("#studyDate")[0].innerText = (studyJson.StudyDate.substring(6,8)+ "-" + studyJson.StudyDate.substring(4,6) + "-" + studyJson.StudyDate.substring(0,4));
+$("#accessionNumber")[0].innerText = studyJson.AccessionNumber;
+$("#patientId")[0].innerText = studyJson.PatientId;
+$("#referringPhysicianName")[0].innerText = studyJson.ReferringPhysicianName;
+
+function refillNodules() {
+    fillLobeWise();
+    fillNodules();
+}
+
+
+function showRisk() {
+    $("#FleishnerRisk").modal("setting",{
+        closable: true
+    }).modal("show");
+}
+
+function hideRisk() {
+    document.getElementById("FleishnerRisk").style.display = "none";
+    document.getElementById("nodulesummary").style.display = "block";
+}
+
+function fillAll() {
+    generate_nodule_editor_content();
+    generate_emphysema_editor_content();
+    generate_fibrosis_editor_content();
+}
+refillNodules();
+
+// Colour the table elements for better readability
+function colorFibrosis(){
+    fibrosisPercentageElements = document.getElementsByClassName("fibrosisPercentage");
+    for(let eachElement of fibrosisPercentageElements) {
+        opacity = Number(eachElement.innerText)/120;
+        eachElement.style.backgroundColor = `rgba(255,0,0,${opacity})`;
+    }
+    honeycombPercentageElements = document.getElementsByClassName("honeycombPercentage");
+    for(let eachElement of honeycombPercentageElements) {
+        opacity = Number(eachElement.innerText)/100; //Yellow seems less visible opacity wise
+        eachElement.style.backgroundColor = `rgba(255,255,0,${opacity})`;
+    }
+    normalPercentageElements = document.getElementsByClassName("normalPercentage");
+    for(let eachElement of normalPercentageElements) {
+        opacity = Number(eachElement.innerText)/120;
+        eachElement.style.backgroundColor = `rgba(0,255,0,${opacity})`;
+    }
+
+    normalPercentageElements = document.getElementsByClassName("ggPercentage");
+    for(let eachElement of normalPercentageElements) {
+        opacity = Number(eachElement.innerText)/120;
+        eachElement.style.backgroundColor = `rgba(0,0,255,${opacity})`;
+    }
+}
+colorFibrosis();
+// Sync the gifs
+$(window).on('load', function() {
+    $('.preload').attr('src', function(i,a){
+        $(this).attr('src','')
+            .removeClass('preload')
+            .attr('src',a);
+    });
+});
