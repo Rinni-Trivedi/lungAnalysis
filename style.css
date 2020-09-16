@@ -25,7 +25,7 @@
 
         td span {
             font-size: 1.125em;
-            color: rgb(59, 59, 58);
+            color: rgb(95 182 173);
             font-weight: bold;
             font-style: normal;
             text-decoration: none
@@ -42,8 +42,8 @@
 
         td {
             font-size: 1.0625em;
-            color: rgb(59, 59, 58);
-            font-weight: normal;
+            color: rgb(15 44 69);
+            font-weight: 600;
             font-style: normal;
             text-decoration: none;
             vertical-align: middle;
@@ -164,8 +164,6 @@
             font-size: 1.1em;
         }
 
-
-
         #reportContent {
             text-align: center;
             width: 90%;
@@ -208,7 +206,6 @@
             cursor: pointer;
             -moz-appearance: none;
             -webkit-appearance: none;
-
         }
 
         input[type=checkbox].css-checkbox:checked+label.css-label {
@@ -274,6 +271,13 @@
             -webkit-appearance: none;
         }
 
+        #report {
+            margin: 5%;
+        }
+        .patientData {
+            margin-bottom: 3%;
+        }
+
         .fibTables {
             text-align: center;
         }
@@ -290,3 +294,44 @@
         .fibTables tbody tr td:first-child {
             font-weight: bold;
         }
+
+        /* header + logo section */
+
+        .ui.secondary.menu>.ui.container>a {
+            margin-top: 0px;
+        }
+        /*navbar section */
+        .navbar-inverse {
+    background-color: #13314b;
+    border-color: #5fb6ad;
+}
+
+.navbar-nav > .active > a { 
+    background-color: green ; 
+}
+a:focus, a:hover {
+    color: white;
+    font-size: medium;
+}
+.tabular li a{
+    font-size: medium;
+    color: #4b5e6d;
+    margin: 0px 15px;
+}
+.tabular li a :active{
+    font-size: medium;
+    color: white;
+    margin: 0px 15px;
+}
+.navbar-brand:hover {
+    margin-left: 0px !important;
+    padding-left: 0px !important;
+}
+.noduleTable img {
+    transition: transform .2s;
+}
+.noduleTable img:hover {
+  -ms-transform: scale(1.5); /* IE 9 */
+  -webkit-transform: scale(1.5); /* Safari 3-8 */
+  transform: scale(1.5);
+}

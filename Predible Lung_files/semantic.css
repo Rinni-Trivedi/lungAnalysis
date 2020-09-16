@@ -21514,7 +21514,6 @@ Floated Menu / Item
   box-shadow: none !important;
   border: none;
   background: none transparent;
-  border-bottom: 1px solid #D4D4D5;
 }
 
 .ui.tabular.fluid.menu {
@@ -21528,7 +21527,7 @@ Floated Menu / Item
   border-right: 1px solid transparent;
   border-top: 2px solid transparent;
   padding: 0.92857143em 1.42857143em;
-  color: rgba(0, 0, 0, 0.87);
+  color: white;
 }
 
 .ui.tabular.menu .item:before {
@@ -21539,21 +21538,11 @@ Floated Menu / Item
 
 .ui.tabular.menu .item:hover {
   background-color: transparent;
-  color: rgba(0, 0, 0, 0.8);
+  color: white;
 }
 
 /* Active */
 
-.ui.tabular.menu .active.item {
-  background: none #FFFFFF;
-  color: rgba(0, 0, 0, 0.95);
-  border-top-width: 1px;
-  border-color: #D4D4D5;
-  font-weight: bold;
-  margin-bottom: -1px;
-  box-shadow: none;
-  border-radius: 0.28571429rem 0.28571429rem 0px 0px !important;
-}
 
 /* Coupling with segment for attachment */
 

@@ -11,8 +11,11 @@
     <link rel="stylesheet" type="text/css" href="./Predible%20Lung_files/inter.css">
     <script type="text/javascript" src="./Predible%20Lung_files/pell.min.js.download"></script>
     <link rel="stylesheet" type="text/css" href="./Predible%20Lung_files/pell.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./style.css">
-    
+
     <script>
         if (typeof module === 'object') {
             window.module = module;
@@ -25,32 +28,42 @@
 
 <body data-gr-c-s-loaded="true">
     <!-- Navbar Starts -->
+    <!-- Header + logo section start -->
     <div class="ui secondary menu">
         <div class="ui container">
-            <a id="decryptkey" style="" class="item" data-tooltip="Decryption Key" data-position="bottom center">
+            <div class="row" style="width:100%;">
+                <div class="col-md-2 col-sm-2 col-xs-2">
+                    <a id="decryptkey" style="margin-top:10%" class="item" data-tooltip="Decryption Key" data-position="bottom center">
                 <img src="./Predible%20Lung_files/key.png" style="width: 20px;height: 20px;">
             </a>
-            <a href="" class="item" data-tooltip="Home" data-position="bottom left">
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2">
+                    <a href="" class="item" data-tooltip="Home" data-position="bottom left">
                  <i class="home icon"></i>
-            </a>
-            <div class="menu" style="margin:auto">
-                <a class="item" href="">
+                    </a>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    <div class="menu" style="margin-left:10%;">
+                        <a class="item" href="">
                     <img src="./Predible%20Lung_files/logo_text.png" style="width: 170px;">
                 </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+    <!-- Header + logo section end -->
     <!-- Navbar Ends -->
     <div class="ui modal tiny" id="downloadmodal">
         <div class="content">
             <div class="ui input" style="width:100%;">
                 <p>Include Nodule Analysis: </p><input type="checkbox" name="nodulePrint" id="nodulePrint" checked="" class="css-checkbox">
-                <label
-                    for="nodulePrint" class="css-label"></label><br>
-                    <p>Include Low Attenuation Analysis: </p><input type="checkbox" name="empPrint" id="empPrint" class="css-checkbox"
-                        checked=""><label for="empPrint" class="css-label"></label><br>
-                    <p>Include High Attenuation Analysis: </p><input type="checkbox" name="fibPrint" id="fibPrint" class="css-checkbox"
-                        checked=""><label for="fibPrint" class="css-label"></label><br>
+                <label for="nodulePrint" class="css-label"></label><br>
+                <p>Include Low Attenuation Analysis: </p><input type="checkbox" name="empPrint" id="empPrint" class="css-checkbox"
+                    checked=""><label for="empPrint" class="css-label"></label><br>
+                <p>Include High Attenuation Analysis: </p><input type="checkbox" name="fibPrint" id="fibPrint" class="css-checkbox"
+                    checked=""><label for="fibPrint" class="css-label"></label><br>
             </div>
         </div>
         <div class="actions">
@@ -100,39 +113,47 @@
         </div>
     </div>
     <br>
-    <div class="ui sixteen column grid">
-        <div class="ui container" id="report" style="margin:auto">
-            <div style="text-align:center;">
-                <table style="text-align:left" class="detailsTable">
-                    <tbody>
-                        <tr>
-                            <td>Name:</td>
-                            <td><span id="name">00303380</span></td>
-                            <td>Accession No:</td>
-                            <td><span id="accessionNumber">00303380</span></td>
-                            <td>Sex:</td>
-                            <td><span id="sex">M</span></td>
-                        </tr>
-                        <tr>
-                            <td>Patient Id:</td>
-                            <td><span id="patientId">00303380</span></td>
-                            <td>Study Date:</td>
-                            <td><span id="studyDate">01-01-2018</span></td>
-                            <td>Age:</td>
-                            <td><span id="age">025Y</span></td>
-                        </tr>
-                        <tr>
-                            <td>Ref. Physician:</td>
-                            <td><span id="referringPhysicianName">-</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+    <div class="">
+        <div class="" id="report">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <table class="patientData">
+                        <tbody>
+                            <tr>
+                                <td>Name:</td>
+                                <td><span id="name">00303380</span></td>
+                                <td>Accession No:</td>
+                                <td><span id="accessionNumber">00303380</span></td>
+                                <td>Sex:</td>
+                                <td><span id="sex">M</span></td>
+                            </tr>
+                            <tr>
+                                <td>Patient Id:</td>
+                                <td><span id="patientId">00303380</span></td>
+                                <td>Study Date:</td>
+                                <td><span id="studyDate">01-01-2018</span></td>
+                                <td>Age:</td>
+                                <td><span id="age">025Y</span></td>
+                            </tr>
+                            <tr>
+                                <td>Ref. Physician:</td>
+                                <td><span id="referringPhysicianName">-</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="ui tabular menu" style="margin-left:7%;margin-right:7%;">
-                <a class="item headings active" data-tab="nodule-analysis">Nodule Analysis</a>
-                <a class="item headings" data-tab="emphysema-analysis">Low Attenuation Analysis</a>
-                <a class="item headings" data-tab="fibrosis-analysis">High Attenuation Analysis</a>
-            </div>
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav">
+                        <div class="ui tabular menu">
+                            <li class="active"><a class="item headings" data-tab="nodule-analysis">Nodule Analysis</a></li>
+                            <li><a class="item headings" data-tab="emphysema-analysis">Low Attenuation Analysis</a></li>
+                            <li><a class="item headings" data-tab="fibrosis-analysis">High Attenuation Analysis</a></li>
+                        </div>
+                    </ul>
+                </div>
+            </nav>
             <div class="ui tab segment active" data-tab="nodule-analysis">
                 <div class="ui sixteen column grid">
                     <div class="row">
@@ -2019,6 +2040,12 @@
     </script>
     <script>
         if (window.module) module = window.module;
+    </script>
+    <script>
+        $(document).ready(function(e){
+   e.stopImmediatePropagation();
+   $('.nav li').removeClass('active');//or $('.active').removeClass('active');
+});
     </script>
 
 
