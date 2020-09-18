@@ -41,7 +41,7 @@
         }
 
         td {
-            font-size: 1.0625em;
+            font-size: 1.2em;
             color: rgb(15 44 69);
             font-weight: 600;
             font-style: normal;
@@ -114,13 +114,12 @@
         }
 
         .attenuationVolumesTable {
-            width: 80%;
             text-align: left;
         }
 
         .attenuationVolumesTable tr td {
             border-bottom: solid 0.1875em rgb(57, 217, 203);
-            font-size: 1.2em;
+            font-size: 1.5em;
         }
 
         .attenuationVolumesTable tbody tr:nth-child(2) {
@@ -166,7 +165,6 @@
 
         #reportContent {
             text-align: center;
-            width: 90%;
             margin: auto;
             max-height: 1408px;
             overflow-y: scroll;
@@ -176,7 +174,7 @@
         .noduleTable {
             width: 80%;
             text-align: left;
-            box-shadow: 0px 2px rgb(57, 217, 203);
+            box-shadow: 3px 3px 10px rgb(19 49 75);
             font-size: 1.25em;
             color: rgb(59, 59, 58);
         }
@@ -300,6 +298,10 @@
         .ui.secondary.menu>.ui.container>a {
             margin-top: 0px;
         }
+        .secondary img:hover {
+            margin: 0px;
+            padding: 0px;
+        }
         /*navbar section */
         .navbar-inverse {
     background-color: #13314b;
@@ -335,3 +337,15 @@ a:focus, a:hover {
   -webkit-transform: scale(1.5); /* Safari 3-8 */
   transform: scale(1.5);
 }
+.riskCatagory {
+    font-size: 1.0625em;
+    color: rgb(15 44 69);
+    font-weight: 600;
+    font-style: normal;
+    text-decoration: none;
+    vertical-align: middle;
+}
+}
+
+/* table CSS */
+

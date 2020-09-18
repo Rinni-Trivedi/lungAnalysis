@@ -12,6 +12,8 @@
     <script type="text/javascript" src="./Predible%20Lung_files/pell.min.js.download"></script>
     <link rel="stylesheet" type="text/css" href="./Predible%20Lung_files/pell.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" 
+  rel="stylesheet"  type='text/css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./style.css">
@@ -155,9 +157,9 @@
                 </div>
             </nav>
             <div class="ui tab segment active" data-tab="nodule-analysis">
-                <div class="ui sixteen column grid">
                     <div class="row">
-                        <div class="seven wide column" style="margin:auto">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="seven wide column" style="margin:auto">
                             <table style="width:50%;text-align:center; display:none">
                                 <tbody>
                                     <tr>
@@ -177,11 +179,13 @@
                                 </tbody>
                             </table>
                             <br>
+
+
                             <div id="reportContent"><br>
                                 <table class="noduleTable">
                                     <tbody>
                                         <tr>
-                                            <td colspan="2" rowspan="1" style="padding:0px"><span style="display: inline-block;">Nodule 1</span></td>
+                                            <td colspan="2" rowspan="1" style="padding:0px"><span style="display: inline-block;">Nodule 1 <span><span><i class="fa fa-car" style="font-size:60px;color:red;"></i></span></td>
                                             <td rowspan="10" style="vertical-align:bottom;">
                                                 <img src="./Predible%20Lung_files/thumbnail_4.png" width="256">
                                             </td>
@@ -204,10 +208,9 @@
                                         <tr style="height:7%"></tr>
                                         <tr style="height:7%"></tr>
                                         <tr>
-                                            <td>Lobe:</td>
+                                            <td>Lobe: <i class="fa fa-minus"></td>
                                             <td>
                                                 <select onchange="changeLobe(0, this)">
-                                                                <option value="?"></option>
                                                                 <option value="R/Upper">Right Upper</option>
                                                                 <option value="R/Middle">Right Middle</option>
                                                                 <option value="R/Lower">Right Lower</option>
@@ -363,7 +366,7 @@
                                                                 <option value="R/Upper">Right Upper</option>
                                                                 <option value="R/Middle">Right Middle</option>
                                                                 <option value="R/Lower">Right Lower</option>
-                                                                <option value="L/Upper">Left Upper</option>
+                                                                <option value="">Left Upper</option>
                                                                 <option value="L/Lower" selected="">Left Lower</option>
                                                             </select>
                                             </td>
@@ -407,16 +410,19 @@
                                 </table>
                                 <br></div>
                         </div>
-                        <div class="seven wide column" style="margin-left:auto;margin-right:auto;">
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="seven wide column" style="margin-left:auto;margin-right:auto;">
                             <div class="field" style="min-height:85%">
-                                <p onchange="generate_nodule_editor_content()">Fleischner Risk Category <i onclick="showRisk()" class="info circle icon"></i>:<input type="radio"
-                                        name="risk" checked="">Low Risk <input type="radio" name="risk" id="highRisk">High Risk</p><br>
+                                <p onchange="generate_nodule_editor_content()" class="riskCatagory">Fleischner Risk Category <i onclick="showRisk()" class="info circle icon"></i>: <input type="radio"
+                                        name="risk" checked=""> Low Risk <input type="radio" name="risk" id="highRisk"> High Risk</p><br>
                                 <div name="nodulesummary" id="nodulesummary" style="min-height:90%"></div>
                                 <button class="ui button" onclick="copyPlease(nodulesummary)" style="float:right">Copy To Clipboard</button>
                             </div>
                         </div>
+                        </div>
+                        
                     </div>
-                </div>
             </div>
             <div class="ui tab segment" data-tab="emphysema-analysis" id="empContent">
                 <div class="ui sixteen column grid">
